@@ -1,0 +1,20 @@
+[package]
+name = "wirepact-translator"
+version = "0.0.0-development"
+edition = "2021"
+
+[dependencies]
+base64 = "0.13.0"
+jsonwebtoken = "8.0.1"
+log = "0.4.14"
+openssl = "0.10.38"
+openssl-sys = "0.9.72"
+prost = "0.10"
+prost-types = "0.10"
+serde = { version = "1.0.136", features = ["derive"] }
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "fs", "signal"] }
+tonic = { version = "0.7", features = ["tls", "tls-roots", "tls-roots-common"] }
+tonic-types = "0.5"
+
+[build-dependencies]
+tonic-build = "0.7"

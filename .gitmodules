@@ -1,0 +1,15 @@
+[submodule "external/protoc-gen-validate"]
+	path = external/protoc-gen-validate
+	url = https://github.com/envoyproxy/protoc-gen-validate.git
+[submodule "external/udpa"]
+	path = external/udpa
+	url = https://github.com/cncf/udpa.git
+[submodule "external/envoy"]
+	path = external/envoy
+	url = https://github.com/envoyproxy/envoy.git
+[submodule "external/googleapis"]
+	path = external/googleapis
+	url = https://github.com/googleapis/googleapis
+[submodule "external/k8s-pki"]
+	path = external/k8s-pki
+	url = https://github.com/WirePact/k8s-pki.git
