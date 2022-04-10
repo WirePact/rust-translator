@@ -83,10 +83,7 @@ pub(crate) fn ingress_ok_response(
 }
 
 #[allow(deprecated)]
-pub(crate) fn egress_ok_response(
-    jwt: &str,
-    headers_to_remove: Vec<String>,
-) -> CheckResponse {
+pub(crate) fn egress_ok_response(jwt: &str, headers_to_remove: Vec<String>) -> CheckResponse {
     CheckResponse {
         status: Some(Status {
             code: GRPC_OK,

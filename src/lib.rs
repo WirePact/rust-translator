@@ -1,5 +1,3 @@
-extern crate core;
-
 use std::error::Error;
 use std::sync::Arc;
 
@@ -21,15 +19,30 @@ mod grpc;
 mod pki;
 mod translator;
 
-/// TODO: Add documentation
+/// Basic translator configuration. Used in [run_translator] to configure and run
+/// the translator and the [Pki].
 pub struct TranslatorConfig {
+    /// Basic address where the [Pki] is accessible to fetch CA and key material.
     pub pki_address: String,
+
+    /// Common name of the translator that is used as issuer for the signed
+    /// JWT tokens.
     pub common_name: String,
+
+    /// Port where the translator will listen for ingress (incoming) traffic.
     pub ingress_port: u16,
+
+    /// Port where the translator will listen for egress (outgoing aka HTTP PROXY) traffic.
     pub egress_port: u16,
+
+    /// The effective translator that contains the ingress and egress function to
+    /// transform authentication data into the signed JWT for WirePact.
     pub translator: Arc<dyn Translator>,
 }
 
+/// Runs the [Translator] and the [Pki] in a separate thread.
+/// The ingress/egress gRPC servers are configured with their respective ports.
+/// To stop the translator, the threads listen for SIGINT and SIGTERM (or ctrl_c in Windows).
 pub async fn run_translator(config: &TranslatorConfig) -> Result<(), Box<dyn Error>> {
     debug!("Initializing PKI.");
     let pki = Arc::new(Pki::new(&config.pki_address, &config.common_name).await?);

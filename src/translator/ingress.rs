@@ -10,6 +10,8 @@ use crate::translator::responses::{forbidden_response, ingress_ok_response, noop
 use crate::translator::{Translator, WIREPACT_IDENTITY_HEADER};
 use crate::Pki;
 
+/// Struct that contains the ingress result for the [Translator::ingress] method.
+/// Used by the respective constructors to signal a specific result to Envoy.
 pub struct IngressResult {
     skip: bool,
     forbidden: Option<String>,
@@ -18,6 +20,8 @@ pub struct IngressResult {
 }
 
 impl IngressResult {
+    /// Indicates that the request should be skipped (i.e. just forwarded to the destination
+    /// without interfering).
     pub fn skip() -> Self {
         Self {
             skip: true,
@@ -27,6 +31,7 @@ impl IngressResult {
         }
     }
 
+    /// Indicates that the request should be forbidden with a given reason.
     pub fn forbidden(reason: String) -> Self {
         Self {
             skip: false,
@@ -36,6 +41,9 @@ impl IngressResult {
         }
     }
 
+    /// Indicates that the request is allowed and should be forwarded to the upstream.
+    /// May contain an optional list of headers (key/value pairs) that should be added to the
+    /// request and an optional list of headers that should be removed from the request.
     pub fn allowed(
         headers_to_add: Option<Vec<(String, String)>>,
         headers_to_remove: Option<Vec<String>>,

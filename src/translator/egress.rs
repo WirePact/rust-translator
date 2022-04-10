@@ -11,6 +11,8 @@ use crate::Pki;
 
 const NO_USER_ID_REASON: &str = "No user id found in outbound communication.";
 
+/// Struct that contains the egress result for the [Translator::egress] method.
+/// Used by the respective constructors to signal a specific result to Envoy.
 pub struct EgressResult {
     skip: bool,
     forbidden: Option<String>,
@@ -19,6 +21,8 @@ pub struct EgressResult {
 }
 
 impl EgressResult {
+    /// Indicates that the request should be skipped (i.e. just forwarded to the destination
+    /// without interfering).
     pub fn skip() -> Self {
         Self {
             skip: true,
@@ -28,6 +32,7 @@ impl EgressResult {
         }
     }
 
+    /// Indicates that the request should be forbidden with a given reason.
     pub fn forbidden(reason: String) -> Self {
         Self {
             skip: false,
@@ -37,6 +42,7 @@ impl EgressResult {
         }
     }
 
+    /// Indicates that the request should be forbidden since no user ID is given.
     pub fn no_user_id() -> Self {
         Self {
             skip: false,
@@ -46,6 +52,9 @@ impl EgressResult {
         }
     }
 
+    /// Indicates that the request is allowed with the given user ID and
+    /// an optional list of headers that should be removed before the request is
+    /// sent to the destination.
     pub fn allowed(user_id: String, headers_to_remove: Option<Vec<String>>) -> Self {
         Self {
             skip: false,

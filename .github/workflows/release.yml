@@ -1,0 +1,46 @@
+name: Release Package
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  get_next_version:
+    runs-on: ubuntu-latest
+    name: Fetch next version number
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - name: semantic release
+        id: semantic
+        uses: cycjimmy/semantic-release-action@v2
+        with:
+          dry_run: true
+          working_directory: .github/fetch_version
+
+      - run: echo ${{ steps.semantic.outputs.new_release_version }}
+      - run: echo ${{ steps.semantic.outputs.new_release_published }}
+
+    outputs:
+      create_release: ${{ steps.semantic.outputs.new_release_published }}
+      new_version: ${{ steps.semantic.outputs.new_release_version }}
+
+  release_package:
+    needs: get_next_version
+    if: needs.get_next_version.outputs.create_release == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      # TODO: as soon as this package gets released to crates.io,
+      # we need to add the cargo publish part (releaserc.json)
+
+      - name: Semantic Release
+        uses: cycjimmy/semantic-release-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
