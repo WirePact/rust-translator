@@ -109,3 +109,49 @@ fn create_csr(common_name: &str, key: &PKeyRef<Private>) -> Result<X509Req, Box<
 
     Ok(req_builder.build())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const PKI_ADDRESS: &str = "http://localhost:8080";
+
+    #[test]
+    fn create_private_key() {
+        let key = create_key();
+        assert!(key.is_ok());
+        let key = key.unwrap();
+        assert!(key.private_key_to_pem_pkcs8().unwrap().len() > 0);
+    }
+
+    #[test]
+    fn create_csr() {
+        let key = create_key().unwrap();
+        let csr = super::create_csr("test", &key);
+        assert!(csr.is_ok());
+        let csr = csr.unwrap();
+        assert!(csr.verify(&key).unwrap());
+    }
+
+    #[tokio::test]
+    async fn fetch_ca_from_pki() {
+        let mut pki = PkiServiceClient::connect(PKI_ADDRESS.to_string())
+            .await
+            .unwrap();
+        let _ = load_ca(&mut pki).await.unwrap();
+    }
+
+    #[tokio::test]
+    async fn fetch_cert_from_pki_with_csr() {
+        let mut pki = PkiServiceClient::connect(PKI_ADDRESS.to_string())
+            .await
+            .unwrap();
+        let key = create_key().unwrap();
+        let _ = load_cert(&mut pki, "test", &key).await.unwrap();
+    }
+
+    #[tokio::test]
+    async fn fetch_key_from_local_file() {
+        let _ = load_key().await.unwrap();
+    }
+}

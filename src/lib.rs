@@ -20,9 +20,9 @@ mod pki;
 mod translator;
 
 /// Basic translator configuration. Used in [run_translator] to configure and run
-/// the translator and the [Pki].
+/// the translator and the Pki.
 pub struct TranslatorConfig {
-    /// Basic address where the [Pki] is accessible to fetch CA and key material.
+    /// Basic address where the Pki is accessible to fetch CA and key material.
     pub pki_address: String,
 
     /// Common name of the translator that is used as issuer for the signed
@@ -40,7 +40,7 @@ pub struct TranslatorConfig {
     pub translator: Arc<dyn Translator>,
 }
 
-/// Runs the [Translator] and the [Pki] in a separate thread.
+/// Runs the [Translator] and the Pki in a separate thread.
 /// The ingress/egress gRPC servers are configured with their respective ports.
 /// To stop the translator, the threads listen for SIGINT and SIGTERM (or ctrl_c in Windows).
 pub async fn run_translator(config: &TranslatorConfig) -> Result<(), Box<dyn Error>> {
@@ -71,7 +71,7 @@ pub async fn run_translator(config: &TranslatorConfig) -> Result<(), Box<dyn Err
     Ok(())
 }
 
-#[cfg(windows)]
+#[cfg(all(windows, not(test)))]
 async fn signal() {
     use tokio::signal::windows::ctrl_c;
     let mut stream = ctrl_c().unwrap();
@@ -80,7 +80,7 @@ async fn signal() {
     info!("Signal received. Shutting down server.");
 }
 
-#[cfg(unix)]
+#[cfg(all(unix, not(test)))]
 async fn signal() {
     use log::debug;
     use tokio::signal::unix::{signal, SignalKind};
@@ -94,4 +94,53 @@ async fn signal() {
     }
 
     info!("Signal received. Shutting down server.");
+}
+
+#[cfg(test)]
+async fn signal() {}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    struct SkipTranslator {}
+
+    #[tonic::async_trait]
+    impl Translator for SkipTranslator {
+        async fn ingress(&self, _: &str, _: &CheckRequest) -> Result<IngressResult, Status> {
+            Ok(IngressResult::skip())
+        }
+
+        async fn egress(&self, _: &CheckRequest) -> Result<EgressResult, Status> {
+            Ok(EgressResult::skip())
+        }
+    }
+
+    #[tokio::test]
+    async fn error_on_pki_not_found() {
+        let config = TranslatorConfig {
+            pki_address: "http://foobar".to_string(),
+            common_name: "test".to_string(),
+            ingress_port: 50051,
+            egress_port: 50052,
+            translator: Arc::new(SkipTranslator {}),
+        };
+
+        let result = run_translator(&config).await;
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn start_translator() {
+        let config = TranslatorConfig {
+            pki_address: "http://localhost:8080".to_string(),
+            common_name: "test".to_string(),
+            ingress_port: 50051,
+            egress_port: 50052,
+            translator: Arc::new(SkipTranslator {}),
+        };
+
+        let result = run_translator(&config).await;
+        assert!(result.is_ok());
+    }
 }

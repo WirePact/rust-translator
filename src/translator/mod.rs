@@ -23,7 +23,7 @@ pub const HTTP_AUTHORIZATION_HEADER: &str = "authorization";
 pub trait Translator: Send + Sync {
     /// Inbound communication translator. Used to transform a signed JWT
     /// (if any) into the corresponding authentication data. If no JWT
-    /// is available or no [subject_id] can be parsed, the method will
+    /// is available or no subject_id can be parsed, the method will
     /// not be called and the [IngressResult] will be [IngressResult::forbidden].
     async fn ingress(
         &self,
