@@ -42,6 +42,5 @@ jobs:
       - name: deploy gh pages
         uses: JamesIves/github-pages-deploy-action@v4.3.0
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
           branch: gh-pages
           folder: target/doc
