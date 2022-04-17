@@ -20,7 +20,8 @@ jobs:
 
       - uses: actions-rs/cargo@v1
         with:
-          command: doc --all --no-deps
+          command: doc
+          args: --no-deps
 
       - name: create index.html
         run: echo "<meta http-equiv=\"refresh\" content=\"0; url=wirepact_translator\">" > target/doc/index.html
