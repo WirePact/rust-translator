@@ -7,6 +7,7 @@ const INCLUDES: &[&str; 5] = &[
 ];
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // TODO: copy the needed protos over to a proto dir.
     println!(
         "cargo:rerun-if-changed=./external/envoy/api/envoy/service/auth/v3/external_auth.proto"
     );

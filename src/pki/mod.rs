@@ -154,3 +154,32 @@ struct Claims {
     iss: String,
     sub: String,
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const PKI_ADDRESS: &str = "http://localhost:8080";
+
+    #[tokio::test]
+    async fn create_new_pki() {
+        let pki = Pki::new(PKI_ADDRESS, "test").await.unwrap();
+        assert_eq!(pki.common_name, "test");
+    }
+
+    #[tokio::test]
+    async fn sign_jwt() {
+        let pki = Pki::new(PKI_ADDRESS, "test").await.unwrap();
+        let jwt = pki.create_signed_jwt("test_user_id").unwrap();
+        assert!(jwt.len() > 0);
+        assert!(jwt.starts_with("ey"));
+    }
+
+    #[tokio::test]
+    async fn extract_id_from_jwt() {
+        let pki = Pki::new(PKI_ADDRESS, "test").await.unwrap();
+        let jwt = pki.create_signed_jwt("test_user_id").unwrap();
+        let id = pki.get_subject_from_jwt(&jwt).unwrap();
+        assert_eq!(id, "test_user_id");
+    }
+}

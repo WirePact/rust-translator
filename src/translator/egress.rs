@@ -9,7 +9,7 @@ use crate::translator::responses::{egress_ok_response, forbidden_response, noop_
 use crate::translator::Translator;
 use crate::Pki;
 
-const NO_USER_ID_REASON: &str = "No user id found in outbound communication.";
+const NO_USER_ID_REASON: &str = "No user ID found in outbound communication.";
 
 /// Struct that contains the egress result for the [Translator::egress] method.
 /// Used by the respective constructors to signal a specific result to Envoy.
@@ -46,7 +46,7 @@ impl EgressResult {
     pub fn no_user_id() -> Self {
         Self {
             skip: false,
-            forbidden: Some("No UserID given for outbound communication.".to_string()),
+            forbidden: Some(NO_USER_ID_REASON.to_string()),
             headers_to_remove: Vec::new(),
             user_id: None,
         }
@@ -94,14 +94,16 @@ impl Authorization for EgressServer {
             return Ok(Response::new(noop_ok_response()));
         }
 
+        if let Some(reason) = egress_result.forbidden {
+            if reason != NO_USER_ID_REASON {
+                info!("Request is forbidden, reason: {}.", reason);
+                return Ok(Response::new(forbidden_response(&reason)));
+            }
+        }
+
         if egress_result.user_id.is_none() {
             info!("Request is forbidden, reason: no user id is provided.");
             return Ok(Response::new(forbidden_response(NO_USER_ID_REASON)));
-        }
-
-        if let Some(reason) = egress_result.forbidden {
-            info!("Request is forbidden, reason: {}.", reason);
-            return Ok(Response::new(forbidden_response(&reason)));
         }
 
         let user_id = egress_result.user_id.unwrap();
@@ -118,5 +120,149 @@ impl Authorization for EgressServer {
             &jwt,
             egress_result.headers_to_remove,
         )))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::grpc::envoy::service::auth::v3::check_response::HttpResponse;
+    use crate::{IngressResult, WIREPACT_IDENTITY_HEADER};
+
+    use super::*;
+
+    const PKI_ADDRESS: &str = "http://localhost:8080";
+    const GRPC_OK: i32 = 0;
+    const GRPC_PERMISSION_DENIED: i32 = 7;
+
+    struct Skip;
+    #[crate::async_trait]
+    impl Translator for Skip {
+        async fn ingress(&self, _: &str, _: &CheckRequest) -> Result<IngressResult, Status> {
+            todo!()
+        }
+
+        async fn egress(&self, _: &CheckRequest) -> Result<EgressResult, Status> {
+            Ok(EgressResult::skip())
+        }
+    }
+
+    struct NoUserId;
+    #[crate::async_trait]
+    impl Translator for NoUserId {
+        async fn ingress(&self, _: &str, _: &CheckRequest) -> Result<IngressResult, Status> {
+            todo!()
+        }
+
+        async fn egress(&self, _: &CheckRequest) -> Result<EgressResult, Status> {
+            Ok(EgressResult::no_user_id())
+        }
+    }
+
+    struct Forbidden;
+    #[crate::async_trait]
+    impl Translator for Forbidden {
+        async fn ingress(&self, _: &str, _: &CheckRequest) -> Result<IngressResult, Status> {
+            todo!()
+        }
+
+        async fn egress(&self, _: &CheckRequest) -> Result<EgressResult, Status> {
+            Ok(EgressResult::forbidden("reason".to_string()))
+        }
+    }
+
+    struct Allowed;
+    #[crate::async_trait]
+    impl Translator for Allowed {
+        async fn ingress(&self, _: &str, _: &CheckRequest) -> Result<IngressResult, Status> {
+            todo!()
+        }
+
+        async fn egress(&self, _: &CheckRequest) -> Result<EgressResult, Status> {
+            Ok(EgressResult::allowed("userid".to_string(), None))
+        }
+    }
+
+    #[tokio::test]
+    async fn noop_response_on_skip() {
+        let translator = Arc::new(Skip {});
+        let pki = Arc::new(Pki::new(PKI_ADDRESS, "test").await.unwrap());
+        let server = EgressServer::new(translator, pki);
+
+        let request = CheckRequest { attributes: None };
+
+        let response = server
+            .check(Request::new(request))
+            .await
+            .unwrap()
+            .into_inner();
+
+        assert_eq!(response.status.unwrap().code, GRPC_OK);
+    }
+
+    #[tokio::test]
+    async fn forbidden_on_no_userid() {
+        let translator = Arc::new(NoUserId {});
+        let pki = Arc::new(Pki::new(PKI_ADDRESS, "test").await.unwrap());
+        let server = EgressServer::new(translator, pki);
+
+        let request = CheckRequest { attributes: None };
+
+        let response = server
+            .check(Request::new(request))
+            .await
+            .unwrap()
+            .into_inner();
+
+        assert_eq!(
+            response.status.as_ref().unwrap().code,
+            GRPC_PERMISSION_DENIED
+        );
+        assert_eq!(response.status.as_ref().unwrap().message, NO_USER_ID_REASON);
+    }
+
+    #[tokio::test]
+    async fn forbidden_on_forbidden_response() {
+        let translator = Arc::new(Forbidden {});
+        let pki = Arc::new(Pki::new(PKI_ADDRESS, "test").await.unwrap());
+        let server = EgressServer::new(translator, pki);
+
+        let request = CheckRequest { attributes: None };
+
+        let response = server
+            .check(Request::new(request))
+            .await
+            .unwrap()
+            .into_inner();
+
+        assert_eq!(
+            response.status.as_ref().unwrap().code,
+            GRPC_PERMISSION_DENIED
+        );
+        assert_eq!(response.status.as_ref().unwrap().message, "reason");
+    }
+
+    #[tokio::test]
+    async fn allowed() {
+        let translator = Arc::new(Allowed {});
+        let pki = Arc::new(Pki::new(PKI_ADDRESS, "test").await.unwrap());
+        let server = EgressServer::new(translator, pki);
+
+        let request = CheckRequest { attributes: None };
+
+        let response = server
+            .check(Request::new(request))
+            .await
+            .unwrap()
+            .into_inner();
+
+        assert_eq!(response.status.as_ref().unwrap().code, GRPC_OK);
+
+        if let HttpResponse::OkResponse(response) = response.http_response.unwrap() {
+            let header = response.headers.get(0).unwrap().header.as_ref().unwrap();
+            assert_eq!(header.key, WIREPACT_IDENTITY_HEADER);
+            assert!(header.value.starts_with("ey"));
+        } else {
+            panic!("Unexpected response");
+        }
     }
 }
