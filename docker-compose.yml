@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  pki:
+    image: ghcr.io/wirepact/k8s-pki:latest
+    environment:
+      - DEBUG=true
+      - LOCAL=true
+    ports:
+      - 8080:8080
+
+networks:
+  app-net:
+    driver: bridge

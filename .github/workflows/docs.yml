@@ -1,0 +1,33 @@
+name: GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  gh-pages:
+    name: Publish GitHub Pages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - uses: actions-rs/cargo@v1
+        with:
+          command: doc --all --no-deps
+
+      - name: create index.html
+        run: echo "<meta http-equiv=\"refresh\" content=\"0; url=wirepact_translator\">" > target/doc/index.html
+
+      - name: deploy gh pages
+        uses: JamesIves/github-pages-deploy-action@v4.3.0
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: target/doc
