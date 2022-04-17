@@ -18,6 +18,19 @@ jobs:
         with:
           toolchain: stable
 
+      - name: get latest tag
+        uses: actions-ecosystem/action-get-latest-tag@v1
+        id: get-latest-tag
+
+      - name: remove v prefix
+        run: |
+          version=${{ steps.get-latest-tag.outputs.tag }}
+          version=${version#"v"}
+          echo "VERSION=$version" >> $GITHUB_ENV
+
+      - name: set version to $VERSION
+        run: sed -i -e "s/^version = .*/version = \"$VERSION\"/" Cargo.toml
+
       - uses: actions-rs/cargo@v1
         with:
           command: doc
@@ -29,6 +42,6 @@ jobs:
       - name: deploy gh pages
         uses: JamesIves/github-pages-deploy-action@v4.3.0
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: gh-pages
-          FOLDER: target/doc
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: gh-pages
+          folder: target/doc
