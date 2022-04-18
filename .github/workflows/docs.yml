@@ -1,9 +1,11 @@
 name: GitHub Pages
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run: {}
+# on:
+#   push:
+#     branches:
+#       - main
 
 jobs:
   gh-pages:
@@ -42,6 +44,5 @@ jobs:
       - name: deploy gh pages
         uses: JamesIves/github-pages-deploy-action@v4.3.0
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: gh-pages
-          FOLDER: target/doc
+          branch: gh-pages
+          folder: target/doc
