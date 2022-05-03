@@ -1,0 +1,822 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/work/rust-translator/rust-translator/target/debug/build/wirepact-translator-112c0916c2c12256/out/envoy.service.auth.v3.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>envoy.service.auth.v3.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../../../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../../../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../../../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../../../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../../../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../../../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../../../../../../../../../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../../../../../../../../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../../../../../../../../../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../../../../../../../../../../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../../../../../../../../../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../../../../../../../../../../storage.js"></script><script src="../../../../../../../../../../../../crates.js"></script><script defer src="../../../../../../../../../../../../main.js"></script><script defer src="../../../../../../../../../../../../source-script.js"></script><script defer src="../../../../../../../../../../../../source-files.js"></script>
+    <noscript><link rel="stylesheet" href="../../../../../../../../../../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../../../../../../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../../../../../../../../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../../../../../../../../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../../../../../../../../../../wirepact_translator/index.html"><div class="logo-container"><img class="rust-logo" src="../../../../../../../../../../../../rust-logo.svg" alt="logo"></div>
+        </a><h2 class="location"></h2>
+    </nav>
+    <nav class="sidebar"><a class="sidebar-logo" href="../../../../../../../../../../../../wirepact_translator/index.html"><div class="logo-container"><img class="rust-logo" src="../../../../../../../../../../../../rust-logo.svg" alt="logo"></div>
+        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../../../../../../../../../../wirepact_translator/index.html"><img class="rust-logo" src="../../../../../../../../../../../../rust-logo.svg" alt="logo"></a><nav class="sub"><div class="theme-picker hidden"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="22" height="22" alt="Pick another theme!" src="../../../../../../../../../../../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../../../../../../../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../../../../../../../../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
+<span id="2">  2</span>
+<span id="3">  3</span>
+<span id="4">  4</span>
+<span id="5">  5</span>
+<span id="6">  6</span>
+<span id="7">  7</span>
+<span id="8">  8</span>
+<span id="9">  9</span>
+<span id="10"> 10</span>
+<span id="11"> 11</span>
+<span id="12"> 12</span>
+<span id="13"> 13</span>
+<span id="14"> 14</span>
+<span id="15"> 15</span>
+<span id="16"> 16</span>
+<span id="17"> 17</span>
+<span id="18"> 18</span>
+<span id="19"> 19</span>
+<span id="20"> 20</span>
+<span id="21"> 21</span>
+<span id="22"> 22</span>
+<span id="23"> 23</span>
+<span id="24"> 24</span>
+<span id="25"> 25</span>
+<span id="26"> 26</span>
+<span id="27"> 27</span>
+<span id="28"> 28</span>
+<span id="29"> 29</span>
+<span id="30"> 30</span>
+<span id="31"> 31</span>
+<span id="32"> 32</span>
+<span id="33"> 33</span>
+<span id="34"> 34</span>
+<span id="35"> 35</span>
+<span id="36"> 36</span>
+<span id="37"> 37</span>
+<span id="38"> 38</span>
+<span id="39"> 39</span>
+<span id="40"> 40</span>
+<span id="41"> 41</span>
+<span id="42"> 42</span>
+<span id="43"> 43</span>
+<span id="44"> 44</span>
+<span id="45"> 45</span>
+<span id="46"> 46</span>
+<span id="47"> 47</span>
+<span id="48"> 48</span>
+<span id="49"> 49</span>
+<span id="50"> 50</span>
+<span id="51"> 51</span>
+<span id="52"> 52</span>
+<span id="53"> 53</span>
+<span id="54"> 54</span>
+<span id="55"> 55</span>
+<span id="56"> 56</span>
+<span id="57"> 57</span>
+<span id="58"> 58</span>
+<span id="59"> 59</span>
+<span id="60"> 60</span>
+<span id="61"> 61</span>
+<span id="62"> 62</span>
+<span id="63"> 63</span>
+<span id="64"> 64</span>
+<span id="65"> 65</span>
+<span id="66"> 66</span>
+<span id="67"> 67</span>
+<span id="68"> 68</span>
+<span id="69"> 69</span>
+<span id="70"> 70</span>
+<span id="71"> 71</span>
+<span id="72"> 72</span>
+<span id="73"> 73</span>
+<span id="74"> 74</span>
+<span id="75"> 75</span>
+<span id="76"> 76</span>
+<span id="77"> 77</span>
+<span id="78"> 78</span>
+<span id="79"> 79</span>
+<span id="80"> 80</span>
+<span id="81"> 81</span>
+<span id="82"> 82</span>
+<span id="83"> 83</span>
+<span id="84"> 84</span>
+<span id="85"> 85</span>
+<span id="86"> 86</span>
+<span id="87"> 87</span>
+<span id="88"> 88</span>
+<span id="89"> 89</span>
+<span id="90"> 90</span>
+<span id="91"> 91</span>
+<span id="92"> 92</span>
+<span id="93"> 93</span>
+<span id="94"> 94</span>
+<span id="95"> 95</span>
+<span id="96"> 96</span>
+<span id="97"> 97</span>
+<span id="98"> 98</span>
+<span id="99"> 99</span>
+<span id="100">100</span>
+<span id="101">101</span>
+<span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
+<span id="135">135</span>
+<span id="136">136</span>
+<span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
+<span id="150">150</span>
+<span id="151">151</span>
+<span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
+<span id="161">161</span>
+<span id="162">162</span>
+<span id="163">163</span>
+<span id="164">164</span>
+<span id="165">165</span>
+<span id="166">166</span>
+<span id="167">167</span>
+<span id="168">168</span>
+<span id="169">169</span>
+<span id="170">170</span>
+<span id="171">171</span>
+<span id="172">172</span>
+<span id="173">173</span>
+<span id="174">174</span>
+<span id="175">175</span>
+<span id="176">176</span>
+<span id="177">177</span>
+<span id="178">178</span>
+<span id="179">179</span>
+<span id="180">180</span>
+<span id="181">181</span>
+<span id="182">182</span>
+<span id="183">183</span>
+<span id="184">184</span>
+<span id="185">185</span>
+<span id="186">186</span>
+<span id="187">187</span>
+<span id="188">188</span>
+<span id="189">189</span>
+<span id="190">190</span>
+<span id="191">191</span>
+<span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
+<span id="205">205</span>
+<span id="206">206</span>
+<span id="207">207</span>
+<span id="208">208</span>
+<span id="209">209</span>
+<span id="210">210</span>
+<span id="211">211</span>
+<span id="212">212</span>
+<span id="213">213</span>
+<span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
+<span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
+<span id="239">239</span>
+<span id="240">240</span>
+<span id="241">241</span>
+<span id="242">242</span>
+<span id="243">243</span>
+<span id="244">244</span>
+<span id="245">245</span>
+<span id="246">246</span>
+<span id="247">247</span>
+<span id="248">248</span>
+<span id="249">249</span>
+<span id="250">250</span>
+<span id="251">251</span>
+<span id="252">252</span>
+<span id="253">253</span>
+<span id="254">254</span>
+<span id="255">255</span>
+<span id="256">256</span>
+<span id="257">257</span>
+<span id="258">258</span>
+<span id="259">259</span>
+<span id="260">260</span>
+<span id="261">261</span>
+<span id="262">262</span>
+<span id="263">263</span>
+<span id="264">264</span>
+<span id="265">265</span>
+<span id="266">266</span>
+<span id="267">267</span>
+<span id="268">268</span>
+<span id="269">269</span>
+<span id="270">270</span>
+<span id="271">271</span>
+<span id="272">272</span>
+<span id="273">273</span>
+<span id="274">274</span>
+<span id="275">275</span>
+<span id="276">276</span>
+<span id="277">277</span>
+<span id="278">278</span>
+<span id="279">279</span>
+<span id="280">280</span>
+<span id="281">281</span>
+<span id="282">282</span>
+<span id="283">283</span>
+<span id="284">284</span>
+<span id="285">285</span>
+<span id="286">286</span>
+<span id="287">287</span>
+<span id="288">288</span>
+<span id="289">289</span>
+<span id="290">290</span>
+<span id="291">291</span>
+<span id="292">292</span>
+<span id="293">293</span>
+<span id="294">294</span>
+<span id="295">295</span>
+<span id="296">296</span>
+<span id="297">297</span>
+<span id="298">298</span>
+<span id="299">299</span>
+<span id="300">300</span>
+<span id="301">301</span>
+<span id="302">302</span>
+<span id="303">303</span>
+<span id="304">304</span>
+<span id="305">305</span>
+<span id="306">306</span>
+<span id="307">307</span>
+<span id="308">308</span>
+<span id="309">309</span>
+<span id="310">310</span>
+<span id="311">311</span>
+<span id="312">312</span>
+<span id="313">313</span>
+<span id="314">314</span>
+<span id="315">315</span>
+<span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
+<span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
+<span id="325">325</span>
+<span id="326">326</span>
+<span id="327">327</span>
+<span id="328">328</span>
+<span id="329">329</span>
+<span id="330">330</span>
+<span id="331">331</span>
+<span id="332">332</span>
+<span id="333">333</span>
+<span id="334">334</span>
+<span id="335">335</span>
+<span id="336">336</span>
+<span id="337">337</span>
+<span id="338">338</span>
+<span id="339">339</span>
+<span id="340">340</span>
+<span id="341">341</span>
+<span id="342">342</span>
+<span id="343">343</span>
+<span id="344">344</span>
+<span id="345">345</span>
+<span id="346">346</span>
+<span id="347">347</span>
+<span id="348">348</span>
+<span id="349">349</span>
+<span id="350">350</span>
+<span id="351">351</span>
+<span id="352">352</span>
+<span id="353">353</span>
+<span id="354">354</span>
+<span id="355">355</span>
+<span id="356">356</span>
+<span id="357">357</span>
+<span id="358">358</span>
+<span id="359">359</span>
+<span id="360">360</span>
+<span id="361">361</span>
+<span id="362">362</span>
+<span id="363">363</span>
+<span id="364">364</span>
+<span id="365">365</span>
+<span id="366">366</span>
+<span id="367">367</span>
+<span id="368">368</span>
+<span id="369">369</span>
+<span id="370">370</span>
+<span id="371">371</span>
+<span id="372">372</span>
+<span id="373">373</span>
+<span id="374">374</span>
+<span id="375">375</span>
+<span id="376">376</span>
+<span id="377">377</span>
+<span id="378">378</span>
+<span id="379">379</span>
+<span id="380">380</span>
+<span id="381">381</span>
+<span id="382">382</span>
+<span id="383">383</span>
+<span id="384">384</span>
+<span id="385">385</span>
+<span id="386">386</span>
+<span id="387">387</span>
+<span id="388">388</span>
+<span id="389">389</span>
+<span id="390">390</span>
+<span id="391">391</span>
+<span id="392">392</span>
+<span id="393">393</span>
+<span id="394">394</span>
+<span id="395">395</span>
+<span id="396">396</span>
+<span id="397">397</span>
+<span id="398">398</span>
+<span id="399">399</span>
+<span id="400">400</span>
+<span id="401">401</span>
+<span id="402">402</span>
+<span id="403">403</span>
+<span id="404">404</span>
+<span id="405">405</span>
+<span id="406">406</span>
+<span id="407">407</span>
+</pre><pre class="rust"><code><span class="comment">// [#protodoc-title: Attribute Context ]</span>
+
+<span class="comment">// See :ref:`network filter configuration overview &lt;config_network_filters_ext_authz&gt;`</span>
+<span class="comment">// and :ref:`HTTP filter configuration overview &lt;config_http_filters_ext_authz&gt;`.</span>
+
+<span class="doccomment">/// An attribute is a piece of metadata that describes an activity on a network.</span>
+<span class="doccomment">/// For example, the size of an HTTP request, or the status code of an HTTP response.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Each attribute has a type and a name, which is logically defined as a proto message field</span>
+<span class="doccomment">/// of the `AttributeContext`. The `AttributeContext` is a collection of individual attributes</span>
+<span class="doccomment">/// supported by Envoy authorization system.</span>
+<span class="doccomment">/// [#comment: The following items are left out of this proto</span>
+<span class="doccomment">/// Request.Auth field for jwt tokens</span>
+<span class="doccomment">/// Request.Api for api management</span>
+<span class="doccomment">/// Origin peer that originated the request</span>
+<span class="doccomment">/// Caching Protocol</span>
+<span class="doccomment">/// request_context return values to inject back into the filter chain</span>
+<span class="doccomment">/// peer.claims -- from X.509 extensions</span>
+<span class="doccomment">/// Configuration</span>
+<span class="doccomment">/// - field mask to send</span>
+<span class="doccomment">/// - which return values from request_context are copied back</span>
+<span class="doccomment">/// - which return values are copied into request_headers]</span>
+<span class="doccomment">/// [#next-free-field: 12]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">::prost::Message</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">AttributeContext</span> {
+    <span class="doccomment">/// The source of a network activity, such as starting a TCP connection.</span>
+    <span class="doccomment">/// In a multi hop network activity, the source represents the sender of the</span>
+    <span class="doccomment">/// last hop.</span>
+    <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">message</span>, <span class="ident">optional</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;1&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">source</span>: <span class="ident">::core::option::Option</span><span class="op">&lt;</span><span class="ident">attribute_context::Peer</span><span class="op">&gt;</span>,
+    <span class="doccomment">/// The destination of a network activity, such as accepting a TCP connection.</span>
+    <span class="doccomment">/// In a multi hop network activity, the destination represents the receiver of</span>
+    <span class="doccomment">/// the last hop.</span>
+    <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">message</span>, <span class="ident">optional</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;2&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">destination</span>: <span class="ident">::core::option::Option</span><span class="op">&lt;</span><span class="ident">attribute_context::Peer</span><span class="op">&gt;</span>,
+    <span class="doccomment">/// Represents a network request, such as an HTTP request.</span>
+    <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">message</span>, <span class="ident">optional</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;4&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">request</span>: <span class="ident">::core::option::Option</span><span class="op">&lt;</span><span class="ident">attribute_context::Request</span><span class="op">&gt;</span>,
+    <span class="doccomment">/// This is analogous to http_request.headers, however these contents will not be sent to the</span>
+    <span class="doccomment">/// upstream server. Context_extensions provide an extension mechanism for sending additional</span>
+    <span class="doccomment">/// information to the auth server without modifying the proto definition. It maps to the</span>
+    <span class="doccomment">/// internal opaque context in the filter chain.</span>
+    <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">map</span><span class="op">=</span><span class="string">&quot;string, string&quot;</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;10&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">context_extensions</span>: <span class="ident">::std::collections::HashMap</span><span class="op">&lt;</span><span class="ident">::prost::alloc::string::String</span>, <span class="ident">::prost::alloc::string::String</span><span class="op">&gt;</span>,
+    <span class="doccomment">/// Dynamic metadata associated with the request.</span>
+    <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">message</span>, <span class="ident">optional</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;11&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">metadata_context</span>: <span class="ident">::core::option::Option</span><span class="op">&lt;</span><span class="ident"><span class="kw">super</span>::<span class="kw">super</span>::<span class="kw">super</span>::config::core::v3::Metadata</span><span class="op">&gt;</span>,
+}
+<span class="doccomment">/// Nested message and enum types in `AttributeContext`.</span>
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">attribute_context</span> {
+    <span class="doccomment">/// This message defines attributes for a node that handles a network request.</span>
+    <span class="doccomment">/// The node can be either a service or an application that sends, forwards,</span>
+    <span class="doccomment">/// or receives the request. Service peers should fill in the `service`,</span>
+    <span class="doccomment">/// `principal`, and `labels` as appropriate.</span>
+    <span class="doccomment">/// [#next-free-field: 6]</span>
+    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">::prost::Message</span>)]</span>
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Peer</span> {
+        <span class="doccomment">/// The address of the peer, this is typically the IP address.</span>
+        <span class="doccomment">/// It can also be UDS path, or others.</span>
+        <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">message</span>, <span class="ident">optional</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;1&quot;</span>)]</span>
+        <span class="kw">pub</span> <span class="ident">address</span>: <span class="ident">::core::option::Option</span><span class="op">&lt;</span><span class="ident"><span class="kw">super</span>::<span class="kw">super</span>::<span class="kw">super</span>::<span class="kw">super</span>::config::core::v3::Address</span><span class="op">&gt;</span>,
+        <span class="doccomment">/// The canonical service name of the peer.</span>
+        <span class="doccomment">/// It should be set to :ref:`the HTTP x-envoy-downstream-service-cluster</span>
+        <span class="doccomment">/// &lt;config_http_conn_man_headers_downstream-service-cluster&gt;`</span>
+        <span class="doccomment">/// If a more trusted source of the service name is available through mTLS/secure naming, it</span>
+        <span class="doccomment">/// should be used.</span>
+        <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">string</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;2&quot;</span>)]</span>
+        <span class="kw">pub</span> <span class="ident">service</span>: <span class="ident">::prost::alloc::string::String</span>,
+        <span class="doccomment">/// The labels associated with the peer.</span>
+        <span class="doccomment">/// These could be pod labels for Kubernetes or tags for VMs.</span>
+        <span class="doccomment">/// The source of the labels could be an X.509 certificate or other configuration.</span>
+        <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">map</span><span class="op">=</span><span class="string">&quot;string, string&quot;</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;3&quot;</span>)]</span>
+        <span class="kw">pub</span> <span class="ident">labels</span>: <span class="ident">::std::collections::HashMap</span><span class="op">&lt;</span><span class="ident">::prost::alloc::string::String</span>, <span class="ident">::prost::alloc::string::String</span><span class="op">&gt;</span>,
+        <span class="doccomment">/// The authenticated identity of this peer.</span>
+        <span class="doccomment">/// For example, the identity associated with the workload such as a service account.</span>
+        <span class="doccomment">/// If an X.509 certificate is used to assert the identity this field should be sourced from</span>
+        <span class="doccomment">/// `URI Subject Alternative Names`, `DNS Subject Alternate Names` or `Subject` in that order.</span>
+        <span class="doccomment">/// The primary identity should be the principal. The principal format is issuer specific.</span>
+        <span class="doccomment">///</span>
+        <span class="doccomment">/// Example:</span>
+        <span class="doccomment">/// *    SPIFFE format is `spiffe://trust-domain/path`</span>
+        <span class="doccomment">/// *    Google account format is `&lt;https://accounts.google.com/{userid}`&gt;</span>
+        <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">string</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;4&quot;</span>)]</span>
+        <span class="kw">pub</span> <span class="ident">principal</span>: <span class="ident">::prost::alloc::string::String</span>,
+        <span class="doccomment">/// The X.509 certificate used to authenticate the identify of this peer.</span>
+        <span class="doccomment">/// When present, the certificate contents are encoded in URL and PEM format.</span>
+        <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">string</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;5&quot;</span>)]</span>
+        <span class="kw">pub</span> <span class="ident">certificate</span>: <span class="ident">::prost::alloc::string::String</span>,
+    }
+    <span class="doccomment">/// Represents a network request, such as an HTTP request.</span>
+    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">::prost::Message</span>)]</span>
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Request</span> {
+        <span class="doccomment">/// The timestamp when the proxy receives the first byte of the request.</span>
+        <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">message</span>, <span class="ident">optional</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;1&quot;</span>)]</span>
+        <span class="kw">pub</span> <span class="ident">time</span>: <span class="ident">::core::option::Option</span><span class="op">&lt;</span><span class="ident">::prost_types::Timestamp</span><span class="op">&gt;</span>,
+        <span class="doccomment">/// Represents an HTTP request or an HTTP-like request.</span>
+        <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">message</span>, <span class="ident">optional</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;2&quot;</span>)]</span>
+        <span class="kw">pub</span> <span class="ident">http</span>: <span class="ident">::core::option::Option</span><span class="op">&lt;</span><span class="ident">HttpRequest</span><span class="op">&gt;</span>,
+    }
+    <span class="doccomment">/// This message defines attributes for an HTTP request.</span>
+    <span class="doccomment">/// HTTP/1.x, HTTP/2, gRPC are all considered as HTTP requests.</span>
+    <span class="doccomment">/// [#next-free-field: 13]</span>
+    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">::prost::Message</span>)]</span>
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">HttpRequest</span> {
+        <span class="doccomment">/// The unique ID for a request, which can be propagated to downstream</span>
+        <span class="doccomment">/// systems. The ID should have low probability of collision</span>
+        <span class="doccomment">/// within a single day for a specific service.</span>
+        <span class="doccomment">/// For HTTP requests, it should be X-Request-ID or equivalent.</span>
+        <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">string</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;1&quot;</span>)]</span>
+        <span class="kw">pub</span> <span class="ident">id</span>: <span class="ident">::prost::alloc::string::String</span>,
+        <span class="doccomment">/// The HTTP request method, such as `GET`, `POST`.</span>
+        <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">string</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;2&quot;</span>)]</span>
+        <span class="kw">pub</span> <span class="ident">method</span>: <span class="ident">::prost::alloc::string::String</span>,
+        <span class="doccomment">/// The HTTP request headers. If multiple headers share the same key, they</span>
+        <span class="doccomment">/// must be merged according to the HTTP spec. All header keys must be</span>
+        <span class="doccomment">/// lower-cased, because HTTP header keys are case-insensitive.</span>
+        <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">map</span><span class="op">=</span><span class="string">&quot;string, string&quot;</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;3&quot;</span>)]</span>
+        <span class="kw">pub</span> <span class="ident">headers</span>: <span class="ident">::std::collections::HashMap</span><span class="op">&lt;</span><span class="ident">::prost::alloc::string::String</span>, <span class="ident">::prost::alloc::string::String</span><span class="op">&gt;</span>,
+        <span class="doccomment">/// The request target, as it appears in the first line of the HTTP request. This includes</span>
+        <span class="doccomment">/// the URL path and query-string. No decoding is performed.</span>
+        <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">string</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;4&quot;</span>)]</span>
+        <span class="kw">pub</span> <span class="ident">path</span>: <span class="ident">::prost::alloc::string::String</span>,
+        <span class="doccomment">/// The HTTP request `Host` or &#39;Authority` header value.</span>
+        <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">string</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;5&quot;</span>)]</span>
+        <span class="kw">pub</span> <span class="ident">host</span>: <span class="ident">::prost::alloc::string::String</span>,
+        <span class="doccomment">/// The HTTP URL scheme, such as `http` and `https`.</span>
+        <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">string</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;6&quot;</span>)]</span>
+        <span class="kw">pub</span> <span class="ident">scheme</span>: <span class="ident">::prost::alloc::string::String</span>,
+        <span class="doccomment">/// This field is always empty, and exists for compatibility reasons. The HTTP URL query is</span>
+        <span class="doccomment">/// included in `path` field.</span>
+        <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">string</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;7&quot;</span>)]</span>
+        <span class="kw">pub</span> <span class="ident">query</span>: <span class="ident">::prost::alloc::string::String</span>,
+        <span class="doccomment">/// This field is always empty, and exists for compatibility reasons. The URL fragment is</span>
+        <span class="doccomment">/// not submitted as part of HTTP requests; it is unknowable.</span>
+        <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">string</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;8&quot;</span>)]</span>
+        <span class="kw">pub</span> <span class="ident">fragment</span>: <span class="ident">::prost::alloc::string::String</span>,
+        <span class="doccomment">/// The HTTP request size in bytes. If unknown, it must be -1.</span>
+        <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">int64</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;9&quot;</span>)]</span>
+        <span class="kw">pub</span> <span class="ident">size</span>: <span class="ident">i64</span>,
+        <span class="doccomment">/// The network protocol used with the request, such as &quot;HTTP/1.0&quot;, &quot;HTTP/1.1&quot;, or &quot;HTTP/2&quot;.</span>
+        <span class="doccomment">///</span>
+        <span class="doccomment">/// See :repo:`headers.h:ProtocolStrings &lt;source/common/http/headers.h&gt;` for a list of all</span>
+        <span class="doccomment">/// possible values.</span>
+        <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">string</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;10&quot;</span>)]</span>
+        <span class="kw">pub</span> <span class="ident">protocol</span>: <span class="ident">::prost::alloc::string::String</span>,
+        <span class="doccomment">/// The HTTP request body.</span>
+        <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">string</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;11&quot;</span>)]</span>
+        <span class="kw">pub</span> <span class="ident">body</span>: <span class="ident">::prost::alloc::string::String</span>,
+        <span class="doccomment">/// The HTTP request body in bytes. This is used instead of</span>
+        <span class="doccomment">/// :ref:`body &lt;envoy_v3_api_field_service.auth.v3.AttributeContext.HttpRequest.body&gt;` when</span>
+        <span class="doccomment">/// :ref:`pack_as_bytes &lt;envoy_v3_api_field_extensions.filters.http.ext_authz.v3.BufferSettings.pack_as_bytes&gt;`</span>
+        <span class="doccomment">/// is set to true.</span>
+        <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">bytes</span><span class="op">=</span><span class="string">&quot;vec&quot;</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;12&quot;</span>)]</span>
+        <span class="kw">pub</span> <span class="ident">raw_body</span>: <span class="ident">::prost::alloc::vec::Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
+    }
+}
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">::prost::Message</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CheckRequest</span> {
+    <span class="doccomment">/// The request attributes.</span>
+    <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">message</span>, <span class="ident">optional</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;1&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">attributes</span>: <span class="ident">::core::option::Option</span><span class="op">&lt;</span><span class="ident">AttributeContext</span><span class="op">&gt;</span>,
+}
+<span class="doccomment">/// HTTP attributes for a denied response.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">::prost::Message</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DeniedHttpResponse</span> {
+    <span class="doccomment">/// This field allows the authorization service to send an HTTP response status code to the</span>
+    <span class="doccomment">/// downstream client. If not set, Envoy sends ``403 Forbidden`` HTTP status code by default.</span>
+    <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">message</span>, <span class="ident">optional</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;1&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">status</span>: <span class="ident">::core::option::Option</span><span class="op">&lt;</span><span class="ident"><span class="kw">super</span>::<span class="kw">super</span>::<span class="kw">super</span></span>::<span class="ident">r#type</span><span class="ident">::v3::HttpStatus</span><span class="op">&gt;</span>,
+    <span class="doccomment">/// This field allows the authorization service to send HTTP response headers</span>
+    <span class="doccomment">/// to the downstream client. Note that the :ref:`append field in HeaderValueOption &lt;envoy_v3_api_field_config.core.v3.HeaderValueOption.append&gt;` defaults to</span>
+    <span class="doccomment">/// false when used in this message.</span>
+    <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">message</span>, <span class="ident">repeated</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;2&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">headers</span>: <span class="ident">::prost::alloc::vec::Vec</span><span class="op">&lt;</span><span class="ident"><span class="kw">super</span>::<span class="kw">super</span>::<span class="kw">super</span>::config::core::v3::HeaderValueOption</span><span class="op">&gt;</span>,
+    <span class="doccomment">/// This field allows the authorization service to send a response body data</span>
+    <span class="doccomment">/// to the downstream client.</span>
+    <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">string</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;3&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">body</span>: <span class="ident">::prost::alloc::string::String</span>,
+}
+<span class="doccomment">/// HTTP attributes for an OK response.</span>
+<span class="doccomment">/// [#next-free-field: 9]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">::prost::Message</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">OkHttpResponse</span> {
+    <span class="doccomment">/// HTTP entity headers in addition to the original request headers. This allows the authorization</span>
+    <span class="doccomment">/// service to append, to add or to override headers from the original request before</span>
+    <span class="doccomment">/// dispatching it to the upstream. Note that the :ref:`append field in HeaderValueOption &lt;envoy_v3_api_field_config.core.v3.HeaderValueOption.append&gt;` defaults to</span>
+    <span class="doccomment">/// false when used in this message. By setting the `append` field to `true`,</span>
+    <span class="doccomment">/// the filter will append the correspondent header value to the matched request header.</span>
+    <span class="doccomment">/// By leaving `append` as false, the filter will either add a new header, or override an existing</span>
+    <span class="doccomment">/// one if there is a match.</span>
+    <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">message</span>, <span class="ident">repeated</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;2&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">headers</span>: <span class="ident">::prost::alloc::vec::Vec</span><span class="op">&lt;</span><span class="ident"><span class="kw">super</span>::<span class="kw">super</span>::<span class="kw">super</span>::config::core::v3::HeaderValueOption</span><span class="op">&gt;</span>,
+    <span class="doccomment">/// HTTP entity headers to remove from the original request before dispatching</span>
+    <span class="doccomment">/// it to the upstream. This allows the authorization service to act on auth</span>
+    <span class="doccomment">/// related headers (like `Authorization`), process them, and consume them.</span>
+    <span class="doccomment">/// Under this model, the upstream will either receive the request (if it&#39;s</span>
+    <span class="doccomment">/// authorized) or not receive it (if it&#39;s not), but will not see headers</span>
+    <span class="doccomment">/// containing authorization credentials.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Pseudo headers (such as `:authority`, `:method`, `:path` etc), as well as</span>
+    <span class="doccomment">/// the header `Host`, may not be removed as that would make the request</span>
+    <span class="doccomment">/// malformed. If mentioned in `headers_to_remove` these special headers will</span>
+    <span class="doccomment">/// be ignored.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// When using the HTTP service this must instead be set by the HTTP</span>
+    <span class="doccomment">/// authorization service as a comma separated list like so:</span>
+    <span class="doccomment">/// ``x-envoy-auth-headers-to-remove: one-auth-header, another-auth-header``.</span>
+    <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">string</span>, <span class="ident">repeated</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;5&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">headers_to_remove</span>: <span class="ident">::prost::alloc::vec::Vec</span><span class="op">&lt;</span><span class="ident">::prost::alloc::string::String</span><span class="op">&gt;</span>,
+    <span class="doccomment">/// This field has been deprecated in favor of :ref:`CheckResponse.dynamic_metadata</span>
+    <span class="doccomment">/// &lt;envoy_v3_api_field_service.auth.v3.CheckResponse.dynamic_metadata&gt;`. Until it is removed,</span>
+    <span class="doccomment">/// setting this field overrides :ref:`CheckResponse.dynamic_metadata</span>
+    <span class="doccomment">/// &lt;envoy_v3_api_field_service.auth.v3.CheckResponse.dynamic_metadata&gt;`.</span>
+    <span class="attribute">#[<span class="ident">deprecated</span>]</span>
+    <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">message</span>, <span class="ident">optional</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;3&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">dynamic_metadata</span>: <span class="ident">::core::option::Option</span><span class="op">&lt;</span><span class="ident">::prost_types::Struct</span><span class="op">&gt;</span>,
+    <span class="doccomment">/// This field allows the authorization service to send HTTP response headers</span>
+    <span class="doccomment">/// to the downstream client on success. Note that the :ref:`append field in HeaderValueOption &lt;envoy_v3_api_field_config.core.v3.HeaderValueOption.append&gt;`</span>
+    <span class="doccomment">/// defaults to false when used in this message.</span>
+    <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">message</span>, <span class="ident">repeated</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;6&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">response_headers_to_add</span>: <span class="ident">::prost::alloc::vec::Vec</span><span class="op">&lt;</span><span class="ident"><span class="kw">super</span>::<span class="kw">super</span>::<span class="kw">super</span>::config::core::v3::HeaderValueOption</span><span class="op">&gt;</span>,
+    <span class="doccomment">/// This field allows the authorization service to set (and overwrite) query</span>
+    <span class="doccomment">/// string parameters on the original request before it is sent upstream.</span>
+    <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">message</span>, <span class="ident">repeated</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;7&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">query_parameters_to_set</span>: <span class="ident">::prost::alloc::vec::Vec</span><span class="op">&lt;</span><span class="ident"><span class="kw">super</span>::<span class="kw">super</span>::<span class="kw">super</span>::config::core::v3::QueryParameter</span><span class="op">&gt;</span>,
+    <span class="doccomment">/// This field allows the authorization service to specify which query parameters</span>
+    <span class="doccomment">/// should be removed from the original request before it is sent upstream. Each</span>
+    <span class="doccomment">/// element in this list is a case-sensitive query parameter name to be removed.</span>
+    <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">string</span>, <span class="ident">repeated</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;8&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">query_parameters_to_remove</span>: <span class="ident">::prost::alloc::vec::Vec</span><span class="op">&lt;</span><span class="ident">::prost::alloc::string::String</span><span class="op">&gt;</span>,
+}
+<span class="doccomment">/// Intended for gRPC and Network Authorization servers `only`.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">::prost::Message</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CheckResponse</span> {
+    <span class="doccomment">/// Status `OK` allows the request. Any other status indicates the request should be denied, and</span>
+    <span class="doccomment">/// for HTTP filter, if not overridden by :ref:`denied HTTP response status &lt;envoy_v3_api_field_service.auth.v3.DeniedHttpResponse.status&gt;`</span>
+    <span class="doccomment">/// Envoy sends ``403 Forbidden`` HTTP status code by default.</span>
+    <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">message</span>, <span class="ident">optional</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;1&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">status</span>: <span class="ident">::core::option::Option</span><span class="op">&lt;</span><span class="ident"><span class="kw">super</span>::<span class="kw">super</span>::<span class="kw">super</span>::<span class="kw">super</span>::google::rpc::Status</span><span class="op">&gt;</span>,
+    <span class="doccomment">/// Optional response metadata that will be emitted as dynamic metadata to be consumed by the next</span>
+    <span class="doccomment">/// filter. This metadata lives in a namespace specified by the canonical name of extension filter</span>
+    <span class="doccomment">/// that requires it:</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// - :ref:`envoy.filters.http.ext_authz &lt;config_http_filters_ext_authz_dynamic_metadata&gt;` for HTTP filter.</span>
+    <span class="doccomment">/// - :ref:`envoy.filters.network.ext_authz &lt;config_network_filters_ext_authz_dynamic_metadata&gt;` for network filter.</span>
+    <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">message</span>, <span class="ident">optional</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;4&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">dynamic_metadata</span>: <span class="ident">::core::option::Option</span><span class="op">&lt;</span><span class="ident">::prost_types::Struct</span><span class="op">&gt;</span>,
+    <span class="doccomment">/// An message that contains HTTP response attributes. This message is</span>
+    <span class="doccomment">/// used when the authorization service needs to send custom responses to the</span>
+    <span class="doccomment">/// downstream client or, to modify/add request headers being dispatched to the upstream.</span>
+    <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">oneof</span><span class="op">=</span><span class="string">&quot;check_response::HttpResponse&quot;</span>, <span class="ident">tags</span><span class="op">=</span><span class="string">&quot;2, 3&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">http_response</span>: <span class="ident">::core::option::Option</span><span class="op">&lt;</span><span class="ident">check_response::HttpResponse</span><span class="op">&gt;</span>,
+}
+<span class="doccomment">/// Nested message and enum types in `CheckResponse`.</span>
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">check_response</span> {
+    <span class="doccomment">/// An message that contains HTTP response attributes. This message is</span>
+    <span class="doccomment">/// used when the authorization service needs to send custom responses to the</span>
+    <span class="doccomment">/// downstream client or, to modify/add request headers being dispatched to the upstream.</span>
+    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">::prost::Oneof</span>)]</span>
+    <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">HttpResponse</span> {
+        <span class="doccomment">/// Supplies http attributes for a denied response.</span>
+        <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">message</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;2&quot;</span>)]</span>
+        <span class="ident">DeniedResponse</span>(<span class="ident"><span class="kw">super</span>::DeniedHttpResponse</span>),
+        <span class="doccomment">/// Supplies http attributes for an ok response.</span>
+        <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">message</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;3&quot;</span>)]</span>
+        <span class="ident">OkResponse</span>(<span class="ident"><span class="kw">super</span>::OkHttpResponse</span>),
+    }
+}
+<span class="doccomment">/// Generated server implementations.</span>
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">authorization_server</span> {
+    <span class="attribute">#![<span class="ident">allow</span>(<span class="ident">unused_variables</span>, <span class="ident">dead_code</span>, <span class="ident">missing_docs</span>, <span class="ident">clippy::let_unit_value</span>)]</span>
+    <span class="kw">use</span> <span class="ident">tonic::codegen</span>::<span class="kw-2">*</span>;
+    <span class="doccomment">///Generated trait containing gRPC methods that should be implemented for use with AuthorizationServer.</span>
+    <span class="attribute">#[<span class="ident">async_trait</span>]</span>
+    <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Authorization</span>: <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span> <span class="op">+</span> <span class="lifetime">&#39;static</span> {
+        <span class="doccomment">/// Performs authorization check based on the attributes associated with the</span>
+        <span class="doccomment">/// incoming request, and returns status `OK` or not `OK`.</span>
+        <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">check</span>(
+            <span class="kw-2">&amp;</span><span class="self">self</span>,
+            <span class="ident">request</span>: <span class="ident">tonic::Request</span><span class="op">&lt;</span><span class="ident"><span class="kw">super</span>::CheckRequest</span><span class="op">&gt;</span>,
+        ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">tonic::Response</span><span class="op">&lt;</span><span class="ident"><span class="kw">super</span>::CheckResponse</span><span class="op">&gt;</span>, <span class="ident">tonic::Status</span><span class="op">&gt;</span>;
+    }
+    <span class="doccomment">/// A generic interface for performing authorization check on incoming</span>
+    <span class="doccomment">/// requests to a networked service.</span>
+    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">AuthorizationServer</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Authorization</span><span class="op">&gt;</span> {
+        <span class="ident">inner</span>: <span class="ident">_Inner</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
+        <span class="ident">accept_compression_encodings</span>: (),
+        <span class="ident">send_compression_encodings</span>: (),
+    }
+    <span class="kw">struct</span> <span class="ident">_Inner</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>);
+    <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Authorization</span><span class="op">&gt;</span> <span class="ident">AuthorizationServer</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">inner</span>: <span class="ident">T</span>) -&gt; <span class="self">Self</span> {
+            <span class="ident"><span class="self">Self</span>::from_arc</span>(<span class="ident">Arc::new</span>(<span class="ident">inner</span>))
+        }
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_arc</span>(<span class="ident">inner</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) -&gt; <span class="self">Self</span> {
+            <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">_Inner</span>(<span class="ident">inner</span>);
+            <span class="self">Self</span> {
+                <span class="ident">inner</span>,
+                <span class="ident">accept_compression_encodings</span>: <span class="ident">Default::default</span>(),
+                <span class="ident">send_compression_encodings</span>: <span class="ident">Default::default</span>(),
+            }
+        }
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_interceptor</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(
+            <span class="ident">inner</span>: <span class="ident">T</span>,
+            <span class="ident">interceptor</span>: <span class="ident">F</span>,
+        ) -&gt; <span class="ident">InterceptedService</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">F</span><span class="op">&gt;</span>
+        <span class="kw">where</span>
+            <span class="ident">F</span>: <span class="ident">tonic::service::Interceptor</span>,
+        {
+            <span class="ident">InterceptedService::new</span>(<span class="ident"><span class="self">Self</span>::new</span>(<span class="ident">inner</span>), <span class="ident">interceptor</span>)
+        }
+    }
+    <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">B</span><span class="op">&gt;</span> <span class="ident">tonic::codegen::Service</span><span class="op">&lt;</span><span class="ident">http::Request</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">AuthorizationServer</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
+    <span class="kw">where</span>
+        <span class="ident">T</span>: <span class="ident">Authorization</span>,
+        <span class="ident">B</span>: <span class="ident">Body</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
+        <span class="ident">B::Error</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">StdError</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
+    {
+        <span class="kw">type</span> <span class="ident">Response</span> <span class="op">=</span> <span class="ident">http::Response</span><span class="op">&lt;</span><span class="ident">tonic::body::BoxBody</span><span class="op">&gt;</span>;
+        <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">std::convert::Infallible</span>;
+        <span class="kw">type</span> <span class="ident">Future</span> <span class="op">=</span> <span class="ident">BoxFuture</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::Response</span>, <span class="ident"><span class="self">Self</span>::Error</span><span class="op">&gt;</span>;
+        <span class="kw">fn</span> <span class="ident">poll_ready</span>(
+            <span class="kw-2">&amp;mut</span> <span class="self">self</span>,
+            <span class="ident">_cx</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>,
+        ) -&gt; <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident"><span class="self">Self</span>::Error</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+            <span class="ident">Poll::Ready</span>(<span class="prelude-val">Ok</span>(()))
+        }
+        <span class="kw">fn</span> <span class="ident">call</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">req</span>: <span class="ident">http::Request</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>) -&gt; <span class="ident"><span class="self">Self</span>::Future</span> {
+            <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">clone</span>();
+            <span class="kw">match</span> <span class="ident">req</span>.<span class="ident">uri</span>().<span class="ident">path</span>() {
+                <span class="string">&quot;/envoy.service.auth.v3.Authorization/Check&quot;</span> =&gt; {
+                    <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">non_camel_case_types</span>)]</span>
+                    <span class="kw">struct</span> <span class="ident">CheckSvc</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Authorization</span><span class="op">&gt;</span>(<span class="kw">pub</span> <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>);
+                    <span class="kw">impl</span><span class="op">&lt;</span>
+                        <span class="ident">T</span>: <span class="ident">Authorization</span>,
+                    <span class="op">&gt;</span> <span class="ident">tonic::server::UnaryService</span><span class="op">&lt;</span><span class="ident"><span class="kw">super</span>::CheckRequest</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">CheckSvc</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+                        <span class="kw">type</span> <span class="ident">Response</span> <span class="op">=</span> <span class="ident"><span class="kw">super</span>::CheckResponse</span>;
+                        <span class="kw">type</span> <span class="ident">Future</span> <span class="op">=</span> <span class="ident">BoxFuture</span><span class="op">&lt;</span>
+                            <span class="ident">tonic::Response</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::Response</span><span class="op">&gt;</span>,
+                            <span class="ident">tonic::Status</span>,
+                        <span class="op">&gt;</span>;
+                        <span class="kw">fn</span> <span class="ident">call</span>(
+                            <span class="kw-2">&amp;mut</span> <span class="self">self</span>,
+                            <span class="ident">request</span>: <span class="ident">tonic::Request</span><span class="op">&lt;</span><span class="ident"><span class="kw">super</span>::CheckRequest</span><span class="op">&gt;</span>,
+                        ) -&gt; <span class="ident"><span class="self">Self</span>::Future</span> {
+                            <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">clone</span>();
+                            <span class="kw">let</span> <span class="ident">fut</span> <span class="op">=</span> <span class="kw">async</span> <span class="kw">move</span> { (<span class="kw-2">*</span><span class="ident">inner</span>).<span class="ident">check</span>(<span class="ident">request</span>).<span class="kw">await</span> };
+                            <span class="ident">Box::pin</span>(<span class="ident">fut</span>)
+                        }
+                    }
+                    <span class="kw">let</span> <span class="ident">accept_compression_encodings</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">accept_compression_encodings</span>;
+                    <span class="kw">let</span> <span class="ident">send_compression_encodings</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">send_compression_encodings</span>;
+                    <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">clone</span>();
+                    <span class="kw">let</span> <span class="ident">fut</span> <span class="op">=</span> <span class="kw">async</span> <span class="kw">move</span> {
+                        <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">inner</span>.<span class="number">0</span>;
+                        <span class="kw">let</span> <span class="ident">method</span> <span class="op">=</span> <span class="ident">CheckSvc</span>(<span class="ident">inner</span>);
+                        <span class="kw">let</span> <span class="ident">codec</span> <span class="op">=</span> <span class="ident">tonic::codec::ProstCodec::default</span>();
+                        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">grpc</span> <span class="op">=</span> <span class="ident">tonic::server::Grpc::new</span>(<span class="ident">codec</span>)
+                            .<span class="ident">apply_compression_config</span>(
+                                <span class="ident">accept_compression_encodings</span>,
+                                <span class="ident">send_compression_encodings</span>,
+                            );
+                        <span class="kw">let</span> <span class="ident">res</span> <span class="op">=</span> <span class="ident">grpc</span>.<span class="ident">unary</span>(<span class="ident">method</span>, <span class="ident">req</span>).<span class="kw">await</span>;
+                        <span class="prelude-val">Ok</span>(<span class="ident">res</span>)
+                    };
+                    <span class="ident">Box::pin</span>(<span class="ident">fut</span>)
+                }
+                <span class="kw">_</span> =&gt; {
+                    <span class="ident">Box::pin</span>(<span class="kw">async</span> <span class="kw">move</span> {
+                        <span class="prelude-val">Ok</span>(
+                            <span class="ident">http::Response::builder</span>()
+                                .<span class="ident">status</span>(<span class="number">200</span>)
+                                .<span class="ident">header</span>(<span class="string">&quot;grpc-status&quot;</span>, <span class="string">&quot;12&quot;</span>)
+                                .<span class="ident">header</span>(<span class="string">&quot;content-type&quot;</span>, <span class="string">&quot;application/grpc&quot;</span>)
+                                .<span class="ident">body</span>(<span class="ident">empty_body</span>())
+                                .<span class="ident">unwrap</span>(),
+                        )
+                    })
+                }
+            }
+        }
+    }
+    <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Authorization</span><span class="op">&gt;</span> <span class="ident">Clone</span> <span class="kw">for</span> <span class="ident">AuthorizationServer</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+        <span class="kw">fn</span> <span class="ident">clone</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self</span> {
+            <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">clone</span>();
+            <span class="self">Self</span> {
+                <span class="ident">inner</span>,
+                <span class="ident">accept_compression_encodings</span>: <span class="self">self</span>.<span class="ident">accept_compression_encodings</span>,
+                <span class="ident">send_compression_encodings</span>: <span class="self">self</span>.<span class="ident">send_compression_encodings</span>,
+            }
+        }
+    }
+    <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Authorization</span><span class="op">&gt;</span> <span class="ident">Clone</span> <span class="kw">for</span> <span class="ident">_Inner</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+        <span class="kw">fn</span> <span class="ident">clone</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self</span> {
+            <span class="self">Self</span>(<span class="self">self</span>.<span class="number">0</span>.<span class="ident">clone</span>())
+        }
+    }
+    <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">std::fmt::Debug</span><span class="op">&gt;</span> <span class="ident">std::fmt::Debug</span> <span class="kw">for</span> <span class="ident">_Inner</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+        <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;mut</span> <span class="ident">std::fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) -&gt; <span class="ident">std::fmt::Result</span> {
+            <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;{:?}&quot;</span>, <span class="self">self</span>.<span class="number">0</span>)
+        }
+    }
+    <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Authorization</span><span class="op">&gt;</span> <span class="ident">tonic::transport::NamedService</span> <span class="kw">for</span> <span class="ident">AuthorizationServer</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+        <span class="kw">const</span> <span class="ident">NAME</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;envoy.service.auth.v3.Authorization&quot;</span>;
+    }
+}
+</code></pre></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../../../../../../../../../" data-current-crate="wirepact_translator" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0 (7737e0b5c 2022-04-04)" ></div>
+</body></html>
