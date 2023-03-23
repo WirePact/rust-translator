@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 base64 = "0.13.1"
-jsonwebtoken = "8.2.0"
+jsonwebtoken = "8.3.0"
 log = "0.4.17"
 openssl = "0.10.45"
 openssl-sys = "0.9.80"
