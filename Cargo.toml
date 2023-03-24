@@ -8,7 +8,7 @@ base64 = "0.13.1"
 jsonwebtoken = "8.3.0"
 log = "0.4.17"
 openssl = "0.10.48"
-openssl-sys = "0.9.82"
+openssl-sys = "0.9.83"
 prost = "0.10"
 prost-types = "0.10"
 serde = { version = "1.0.158", features = ["derive"] }
