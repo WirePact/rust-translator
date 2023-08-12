@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 base64 = "0.13.1"
 jsonwebtoken = "8.3.0"
-log = "0.4.19"
+log = "0.4.20"
 openssl = "0.10.56"
 openssl-sys = "0.9.91"
 prost = "0.10"
