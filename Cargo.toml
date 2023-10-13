@@ -11,7 +11,7 @@ openssl = "0.10.57"
 openssl-sys = "0.9.93"
 prost = "0.10"
 prost-types = "0.10"
-serde = { version = "1.0.188", features = ["derive"] }
+serde = { version = "1.0.189", features = ["derive"] }
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "fs", "signal"] }
 tonic = { version = "0.7", features = ["tls", "tls-roots", "tls-roots-common"] }
 tonic-types = "0.5"
